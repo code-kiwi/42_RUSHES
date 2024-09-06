@@ -6,13 +6,13 @@
 /*   By: mhotting <mhotting@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 23:44:44 by mhotting          #+#    #+#             */
-/*   Updated: 2024/09/06 23:44:47 by mhotting         ###   ########.fr       */
+/*   Updated: 2024/09/07 00:03:00 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONNECT_FOUR_H
 # define CONNECT_FOUR_H
 
-#include <stdio.h>
+#include "libft.h"
 
 #endif
