@@ -1,21 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhotting <mhotting@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lespenel <lespenel@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 23:44:34 by mhotting          #+#    #+#             */
-/*   Updated: 2024/09/07 00:05:41 by mhotting         ###   ########.fr       */
+/*   Created: 2024/02/27 02:39:14 by lespenel          #+#    #+#             */
+/*   Updated: 2024/02/27 02:39:24 by lespenel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "connect_four.h"
+#include "ft_string.h"
+#include <unistd.h>
 
-int main(int ac, char **av)
+void	ft_putstr_fd(char *s, int fd)
 {
-    (void) ac;
-    (void) av;
-    ft_printf("Hello World!\n");
-    return (0);
+	write(fd, s, ft_strlen(s));
 }

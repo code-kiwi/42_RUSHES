@@ -1,110 +1,90 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: mhotting <mhotting@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/09/06 23:47:34 by mhotting          #+#    #+#              #
-#    Updated: 2024/09/06 23:58:58 by mhotting         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-#################################################
-#              Variable definitions             #
-#################################################
-
-# GENERAL
 NAME					=	connect4
 CC						=	cc
-ifndef NOFLAGS
-	CFLAGS				=	-Wall -Werror -Wextra
-endif
-HFLAGS					=	-I$(HEADERS_DIR) -I$(LIBFT_HEADERS_DIR)
-FSFLAGS					=	-fsanitize=address
+CFLAGS					=	-Wall -Wextra -Werror -MD -MP -O3
+HFLAGS					=	-I$(INCS) -I$(LIBFT_HEADERS_DIR) -I$(MLX_DIR)
 
-# HEADERS
-HEADERS_DIR				=	includes/
-HEADERS_FILES			=	connect_four.h
-HEADERS					=	$(addprefix $(HEADERS_DIR), $(HEADERS_FILES))
+INCS					=	includes/
+SRCDIR					=	src/
+OBJDIR					=	.build/
 
-# LIBFT
-LIBFT_DIR				=	libft/
+SRC						=	main.c \
+							print_board.c \
+							print_slot.c \
+							print_status.c \
+							init_board.c \
+							free_board.c \
+							game_loop.c \
+							get_player_input.c \
+							get_ai_input.c \
+							check_for_win.c \
+							is_coll_full.c \
+							is_valid_equal.c \
+							coin_utils.c \
+							game_loop_ui.c \
+							t_mlx_init.c \
+							t_mlx_destroy.c \
+							t_image_init.c \
+							t_mlx_mouse_utils.c \
+							t_mlx_add_hook.c \
+							t_mlx_render.c \
+							t_mlx_events.c \
+							t_mlx_draw_pixel.c \
+							t_mlx_draw_line.c \
+							t_mlx_draw_circle.c \
+							t_mlx_draw_rectangle.c \
+							math.c \
+
+LIB_DIR					=	lib/
+LIBFT_SUBDIR			=	libft/
+LIBFT_DIR				=	$(addprefix $(LIB_DIR), $(LIBFT_SUBDIR))
 LIBFT_FILE				=	libft.a
 LIBFT					=	$(addprefix $(LIBFT_DIR), $(LIBFT_FILE))
 LIBFT_HEADERS_SUBDIR	=	includes/
 LIBFT_HEADERS_DIR		=	$(addprefix $(LIBFT_DIR), $(LIBFT_HEADERS_SUBDIR))
-LIBFT_HEADERS_FILE		=	libft.h
-LIBFT_HEADERS			=	$(addprefix $(LIBFT_HEADERS_DIR), $(LIBFT_HEADERS_FILE))
-LIBFT_FLAGS				=	-L$(LIBFT_DIR) -lft 
+LIBFT_FLAGS				=	-L$(LIBFT_DIR) -lft
 
-# MAIN
-MAIN_DIR				=	main/
-MAIN_FILE				=	main.c
-MAIN					=	$(addprefix $(MAIN_DIR), $(MAIN_FILE))
+MLX_SUBDIR				=	mlx/
+MLX_DIR					=	$(addprefix $(LIB_DIR), $(MLX_SUBDIR))
+MLX_FILE				=	libmlx_Linux.a
+MLX						=	$(addprefix $(MLX_DIR), $(MLX_FILE))
+MLX_HEADERS				=	$(addprefix $(MLX_DIR), $(MLX_HEADER_FILE))
+MLX_FLAGS				=	-L$(MLX_DIR) -lmlx_Linux -lXext -lX11
 
-# SOURCES GENERAL
-SRCS_MAIN_DIR			=	srcs/
-SRCS_FILES				=	$(MAIN)
-SRCS					=	$(addprefix $(SRCS_MAIN_DIR), $(SRCS_FILES))
+OBJ						=	$(addprefix $(OBJDIR), $(SRC:.c=.o))
+DEP						=	$(addprefix $(OBJDIR), $(SRC:.c=.d))
 
-# OBJECTS GENERAL
-OBJS_MAIN_DIR			=	objs/
-OBJS_FILES				=	$(SRCS_FILES:.c=.o)
-OBJS					=	$(addprefix $(OBJS_MAIN_DIR), $(OBJS_FILES))
+$(NAME) : $(LIBFT) $(MLX) $(OBJ)
+	$(CC) $(CFLAGS) $(HFLAGS) $(OBJ) $(LIBFT_FLAGS) $(MLX_FLAGS) -o $(NAME)
 
-# DEPENDENCIES
-DEPS_MAIN_DIR			=	deps/
-DEPS_FILES				=	$(OBJS_FILES:.o=.d)
-DEPS					=	$(addprefix $(DEPS_MAIN_DIR), $(DEPS_FILES))
+-include $(DEP)
 
-#################################################
-#               Rule definitions                #
-#################################################
+$(OBJDIR)%o : $(SRCDIR)%c | $(OBJDIR)
+	$(CC) -c $(CFLAGS) $(HFLAGS) $(DEPFLAGS) $< -o $@
 
-all: $(NAME)
-
-$(NAME): $(LIBFT) $(OBJS)
-	$(CC) $(CFLAGS) $(HFLAGS) $(OBJS) $(LIBFT_FLAGS) -o $@
-
-$(OBJS_MAIN_DIR)%.o: $(SRCS_MAIN_DIR)%.c $(HEADERS) $(LIBFT_HEADERS)
-	@mkdir -p $(@D)
-	@mkdir -p $(DEPS_MAIN_DIR)$(dir $*)
-	$(CC) $(CFLAGS) $(HFLAGS) -MP -MMD -MF $(DEPS_MAIN_DIR)$*.d -c $< -o $@ 
-
-$(LIBFT): init_submodule FORCE
+$(LIBFT) : FORCE
 	$(MAKE) -sC $(LIBFT_DIR)
 
+$(MLX) : FORCE
+	$(MAKE) -sC $(MLX_DIR) > /dev/null 2>&1
+
+$(OBJDIR) :
+	mkdir -p $@
+
+.PHONY: clean
+clean :
+	$(MAKE) -sC $(LIBFT_DIR) clean
+	$(MAKE) -sC $(MLX_DIR) clean > /dev/null 2>&1
+	$(RM) -r $(OBJDIR)
+
+.PHONY: fclean
+fclean : clean
+	$(RM) $(NAME)
+
+.PHONY: re
+re : fclean all
+
+.PHONY: all
+all : $(NAME)
+
+.PHONY: FORCE
 FORCE:
-
-fsanitize: fclean $(LIBFT) $(OBJS)
-	$(CC) $(CFLAGS) $(HFLAGS) $(FSFLAGS) $(OBJS) $(LIBFT_FLAGS) -o $(NAME)
-
-init_submodule:
-	@if git submodule status | egrep -q '^[-+]' ; then \
-		echo "*Info: Need to initialize git submodules"; \
-		git submodule update --init; \
-	fi
-
--include $(DEPS)
-
-clean:
-	rm -rf $(OBJS_MAIN_DIR)
-	rm -rf $(DEPS_MAIN_DIR)
-
-clean-libft:
-	$(MAKE) -C $(LIBFT_DIR) clean
-
-fclean: clean
-	rm -f $(NAME)
-
-fclean-libft:
-	$(MAKE) -sC $(LIBFT_DIR) fclean
-
-ffclean: fclean fclean-libft
-
-re: fclean all
-
-rre: ffclean re
-
-.PHONY: all clean fclean re clean-libft fclean-libft ffclean rre FORCE fsanitize init_submodule

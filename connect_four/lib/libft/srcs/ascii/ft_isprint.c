@@ -1,18 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   connect_four.h                                     :+:      :+:    :+:   */
+/*   ft_isprint.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhotting <mhotting@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lespenel <lespenel@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/06 23:44:44 by mhotting          #+#    #+#             */
-/*   Updated: 2024/09/07 00:03:00 by mhotting         ###   ########.fr       */
+/*   Created: 2024/02/27 02:49:46 by lespenel          #+#    #+#             */
+/*   Updated: 2024/02/27 02:49:47 by lespenel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONNECT_FOUR_H
-# define CONNECT_FOUR_H
-
-#include "libft.h"
-
-#endif
+int	ft_isprint(int c)
+{
+	return (c >= 32 && c <= 126);
+}
